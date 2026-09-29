@@ -1,0 +1,12 @@
+Flask
+flask-cors
+python-dotenv
+pymongo
+pillow
+opencv-python-headless
+joblib
+pandas
+numpy
+scikit-learn
+tld
+gunicorn
