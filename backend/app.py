@@ -181,6 +181,7 @@ from utils.feature_extraction import extract_features
 from dotenv import load_dotenv
 import traceback
 import uuid
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -213,6 +214,7 @@ gemini_client = (
     if GEMINI_API_KEY
     else None
 )
+gemini_executor = ThreadPoolExecutor(max_workers=2)
 
 def validate_with_gemini(url, ml_status):
     """Use Gemini to add contextual URL risk information without replacing ML."""
@@ -237,10 +239,12 @@ Existing machine-learning result: {ml_status}
 """
 
     try:
-        interaction = gemini_client.interactions.create(
+        future = gemini_executor.submit(
+            gemini_client.interactions.create,
             model=GEMINI_MODEL,
             input=prompt,
         )
+        interaction = future.result(timeout=8)
         raw_text = (interaction.output_text or '').strip()
         if raw_text.startswith('```'):
             raw_text = raw_text.strip('`').removeprefix('json').strip()
@@ -257,6 +261,12 @@ Existing machine-learning result: {ml_status}
             'summary': validation.get('summary', 'No additional information was available.'),
             'indicators': validation.get('indicators', []),
             'recommendation': validation.get('recommendation', 'Use caution with this site.'),
+        }
+    except FutureTimeoutError:
+        app.logger.warning('Gemini validation timed out; returning the ML result.')
+        return {
+            'available': False,
+            'message': 'Gemini validation timed out; the ML result is shown.',
         }
     except Exception as error:
         app.logger.warning(f'Gemini validation failed: {error}')
