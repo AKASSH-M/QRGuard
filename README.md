@@ -196,7 +196,6 @@ pip install -r requirements.txt
 
 Create a `.env` file inside `backend/` (optional):
 ```env
-FRONTEND_URL=http://localhost:3000
 PORT=5000
 GEMINI_KEY=your-gemini-api-key
 GEMINI_MODEL=gemini-3.8-flash
@@ -244,7 +243,6 @@ gunicorn --bind 0.0.0.0:$PORT app:app
 Set these backend environment variables on the hosting provider:
 
 ```env
-FRONTEND_URL=https://your-frontend-domain.example
 PORT=5000
 GEMINI_KEY=your-gemini-api-key
 GEMINI_MODEL=gemini-3.8-flash

@@ -192,10 +192,8 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Initialize Flask app
 app = Flask(__name__)
 
-# Configure CORS with the deployed frontend URL(s), separated by commas.
-frontend_urls = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-allowed_origins = [url.strip().rstrip('/') for url in frontend_urls.split(',') if url.strip()]
-CORS(app, resources={r"/*": {"origins": allowed_origins}})
+# Allow the deployed frontend, local development, and other clients to call the API.
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Load the pre-trained model
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'random_forest_model.pkl')
