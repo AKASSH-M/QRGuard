@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
 
 const api = axios.create({
   baseURL: API_URL,
@@ -19,32 +19,12 @@ export const scanQR = async (imageBase64) => {
   }
 };
 
-export const checkSafeUrl = async (url) => {
+export const extractQR = async (imageBase64) => {
   try {
-    const response = await api.post('/checksafe-url', { url });
+    const response = await api.post('/extract-qr', { image: imageBase64 });
     return response.data;
   } catch (error) {
-    console.error('Error checking safe URL:', error);
-    throw error;
-  }
-};
-
-export const checkMaliciousUrl = async (url) => {
-  try {
-    const response = await api.post('/checkmalicious-url', { url });
-    return response.data;
-  } catch (error) {
-    console.error('Error checking malicious URL:', error);
-    throw error;
-  }
-};
-
-export const reportUrl = async (url) => {
-  try {
-    const response = await api.post('/report-url', { url });
-    return response.data;
-  } catch (error) {
-    console.error('Error reporting URL:', error);
+    console.error('Error extracting QR data:', error);
     throw error;
   }
 };

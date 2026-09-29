@@ -41,7 +41,7 @@ QR codes have become a popular vector for phishing attacks — a malicious link 
 | 🔗 **URL Checker** | Paste any suspicious link and get an AI-powered verdict instantly |
 | 🤖 **ML Classification** | Random Forest model classifies URLs as Safe or Malicious |
 | 📊 **Detection Dashboard** | View your complete scan history stored locally |
-| 🗄️ **Database Lookup** | Cross-references against known safe/malicious URL databases (MongoDB) |
+| 💾 **Local Scan History** | Keeps each user's scan history in their browser storage |
 | 🌙 **Dark Cyber Theme** | Premium glassmorphism UI with neon accents and smooth animations |
 | 📱 **Responsive Design** | Works seamlessly on mobile, tablet, and desktop |
 | ⚡ **Real-time Results** | Instant threat analysis with confidence indicators |
@@ -80,8 +80,9 @@ QR codes have become a popular vector for phishing attacks — a malicious link 
 | **OpenCV** | QR code detection and decoding |
 | **Pillow** | Image processing |
 | **scikit-learn** | Random Forest ML model |
+| **Google Genai** | Secondary LLM validation and site-risk explanation |
 | **Pandas / NumPy** | Data manipulation for feature extraction |
-| **MongoDB / PyMongo** | URL threat intelligence database |
+| **Browser localStorage** | Per-browser scan history without a database |
 | **joblib** | Model serialization (.pkl) |
 
 ---
@@ -110,8 +111,6 @@ QR Image / URL Input
         ↓
    URL Normalization
         ↓
-   DB Lookup (MongoDB) ──→ Known Safe/Malicious → Return Result
-        ↓ (if unknown)
    Feature Extraction
         ↓
    Random Forest Predict
@@ -169,7 +168,6 @@ QRGuard/
 ### Prerequisites
 - **Node.js** v18+
 - **Python** v3.8+
-- **MongoDB** (optional — app works without it via ML fallback)
 
 ### 1. Clone the Repository
 
@@ -198,9 +196,10 @@ pip install -r requirements.txt
 
 Create a `.env` file inside `backend/` (optional):
 ```env
-MONGODB_URI=mongodb://localhost:27017/QRGuard
-MONGODB_DB=QRGuard
+FRONTEND_URL=http://localhost:3000
 PORT=5000
+GEMINI_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
 Start the Flask server:
@@ -223,11 +222,44 @@ Create a `.env` file inside `frontend/` (optional):
 VITE_API_URL=http://localhost:5000
 ```
 
+`VITE_API_URL` is read at frontend build time. For a deployed frontend, set it
+to the public backend URL before running the production build. Do not include a
+trailing slash.
+
 Start the Vite dev server:
 ```bash
 npm run dev
 ```
 > Frontend runs on **http://localhost:3000**
+
+### Production Deployment
+
+Deploy the `backend/` directory as a Python web service with:
+
+```bash
+pip install -r requirements.txt
+gunicorn --bind 0.0.0.0:$PORT app:app
+```
+
+Set these backend environment variables on the hosting provider:
+
+```env
+FRONTEND_URL=https://your-frontend-domain.example
+PORT=5000
+GEMINI_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-3.8-flash
+```
+
+Deploy the `frontend/` directory as a Node/Vite site. Set this environment
+variable before the frontend build:
+
+```env
+VITE_API_URL=https://your-backend-domain.example
+```
+
+Build the frontend with `npm run build` and serve the generated `dist/`
+directory. The backend URL is injected into the compiled frontend through
+`VITE_API_URL`, so changing deployment URLs does not require source changes.
 
 ---
 
@@ -237,10 +269,8 @@ npm run dev
 |--------|----------|-------------|
 | `GET` | `/health` | Server health check |
 | `POST` | `/scan` | Decode & classify QR code image (Base64) |
+| `POST` | `/extract-qr` | Extract QR content through QuickChart with QRServer fallback |
 | `POST` | `/analyze-url` | Directly classify a URL string |
-| `POST` | `/checksafe-url` | Check if URL is in safe database |
-| `POST` | `/checkmalicious-url` | Check if URL is in malicious database |
-| `POST` | `/report-url` | Report a URL as malicious |
 
 ### Example Request — Analyze URL
 ```bash
@@ -263,8 +293,9 @@ curl -X POST http://localhost:5000/analyze-url \
 
 - All QR images are processed **server-side** and not stored
 - Only the extracted **URL string** is used for ML inference
+- The extracted URL is also sent to Gemini for secondary validation when `GEMINI_KEY` is configured
 - CORS is configured to restrict API access
-- MongoDB is gracefully bypassed if unavailable — the ML model handles all predictions independently
+- Scan history is stored in browser localStorage, so each browser profile has its own history without a database.
 
 ---
 

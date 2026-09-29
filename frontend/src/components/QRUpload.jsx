@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud, Image as ImageIcon, X } from 'lucide-react';
-import { scanQR } from '../services/api';
+import { analyzeUrl, extractQR } from '../services/api';
 
-const QRUpload = ({ onResult, setIsLoading, reset, hasResult }) => {
+const QRUpload = ({ onResult, setLoadingPhase, reset, hasResult }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState(null);
@@ -38,28 +38,37 @@ const QRUpload = ({ onResult, setIsLoading, reset, hasResult }) => {
     reader.readAsDataURL(file);
     reader.onload = async () => {
       try {
-        setIsLoading(true);
         const base64String = reader.result.split(',')[1];
-        
-        // Call API
-        const data = await scanQR(base64String);
+
+        setLoadingPhase('extracting');
+        const extraction = await extractQR(base64String);
+        if (extraction.status === 'error') {
+          setError(extraction.message || 'Could not extract QR code data');
+          onResult(null);
+          return;
+        }
+
+        setLoadingPhase('analyzing');
+        const data = await analyzeUrl(extraction.result);
         
         if (data.status === 'error') {
-          setError(data.message || 'Error scanning QR code');
+          setError(data.message || 'Error analyzing QR code data');
           onResult(null);
         } else {
           onResult({
             url: data.url,
             status: data.status,
+            mlStatus: data.ml_status,
+            gemini: data.gemini,
             source: 'upload'
           });
         }
       } catch (err) {
         console.error("Upload error:", err);
-        setError('Failed to connect to the analysis server. Please try again.');
+        setError(err.response?.data?.message || 'Failed to process the QR code. Please try again.');
         onResult(null);
       } finally {
-        setIsLoading(false);
+        setLoadingPhase(null);
       }
     };
   };

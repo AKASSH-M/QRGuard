@@ -1,9 +1,9 @@
 import React, { useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { Camera, RefreshCw, AlertCircle } from 'lucide-react';
-import { scanQR } from '../services/api';
+import { analyzeUrl, extractQR } from '../services/api';
 
-const QRScanner = ({ onResult, setIsLoading, hasResult }) => {
+const QRScanner = ({ onResult, setLoadingPhase, hasResult }) => {
   const webcamRef = useRef(null);
   const [error, setError] = useState(null);
   const [cameraActive, setCameraActive] = useState(true);
@@ -15,30 +15,39 @@ const QRScanner = ({ onResult, setIsLoading, hasResult }) => {
     if (!imageSrc) return;
     
     try {
-      setIsLoading(true);
       // Remove data:image/jpeg;base64, from string
       const base64String = imageSrc.split(',')[1];
-      
-      const data = await scanQR(base64String);
+
+      setLoadingPhase('extracting');
+      const extraction = await extractQR(base64String);
+      if (extraction.status === 'error') {
+        setError(extraction.message || 'Could not extract QR code data');
+        return;
+      }
+
+      setLoadingPhase('analyzing');
+      const data = await analyzeUrl(extraction.result);
       
       if (data.status === 'error') {
-        setError(data.message || 'Error scanning QR code. Make sure it is clearly visible.');
+        setError(data.message || 'Error analyzing QR code data.');
       } else {
         setCameraActive(false);
         setError(null);
         onResult({
           url: data.url,
           status: data.status,
+          mlStatus: data.ml_status,
+          gemini: data.gemini,
           source: 'camera'
         });
       }
     } catch (err) {
       console.error("Camera scan error:", err);
-      setError('Failed to process image. Try again.');
+      setError(err.response?.data?.message || 'Failed to process the QR code. Try again.');
     } finally {
-      setIsLoading(false);
+      setLoadingPhase(null);
     }
-  }, [webcamRef, onResult, setIsLoading]);
+  }, [webcamRef, onResult, setLoadingPhase]);
 
   const handleUserMediaError = () => {
     setError("Unable to access camera. Please check your permissions.");

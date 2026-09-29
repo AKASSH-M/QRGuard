@@ -21,7 +21,7 @@ const TAB_ACTIVE = {
 const Home = () => {
   const [activeTab, setActiveTab] = useState('upload');
   const [result, setResult]       = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingPhase, setLoadingPhase] = useState(null);
 
   const handleScanResult = (data) => {
     if (!data) return;
@@ -46,6 +46,7 @@ const Home = () => {
   const switchTab = (id) => {
     setActiveTab(id);
     resetScanner();
+    setLoadingPhase(null);
   };
 
   return (
@@ -121,11 +122,11 @@ const Home = () => {
             {/* Panel Body */}
             <div className="p-6 flex-grow flex flex-col justify-center min-h-[400px] relative">
               {/* Global loading overlay */}
-              {isLoading && (
+              {loadingPhase && (
                 <div className="absolute inset-0 z-10 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-b-2xl">
                   <div className="w-16 h-16 border-4 border-slate-700 border-t-cyber-neon rounded-full animate-spin" />
                   <p className="mt-4 text-cyber-neon font-medium animate-pulse">
-                    {activeTab === 'url' ? 'Analyzing URL…' : 'Analyzing QR Code…'}
+                    {loadingPhase === 'extracting' ? 'Loading... extracting QR data' : 'Analyzing...'}
                   </p>
                 </div>
               )}
@@ -133,7 +134,7 @@ const Home = () => {
               {activeTab === 'upload' && (
                 <QRUpload
                   onResult={handleScanResult}
-                  setIsLoading={setIsLoading}
+                  setLoadingPhase={setLoadingPhase}
                   reset={resetScanner}
                   hasResult={!!result}
                 />
@@ -142,7 +143,7 @@ const Home = () => {
               {activeTab === 'camera' && (
                 <QRScanner
                   onResult={handleScanResult}
-                  setIsLoading={setIsLoading}
+                  setLoadingPhase={setLoadingPhase}
                   hasResult={!!result}
                 />
               )}
@@ -150,7 +151,7 @@ const Home = () => {
               {activeTab === 'url' && (
                 <URLChecker
                   onResult={handleScanResult}
-                  setIsLoading={setIsLoading}
+                  setLoadingPhase={setLoadingPhase}
                   reset={resetScanner}
                   hasResult={!!result}
                 />

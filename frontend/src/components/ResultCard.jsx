@@ -4,6 +4,7 @@ import { ShieldAlert, ShieldCheck, Link as LinkIcon, ExternalLink, RefreshCw, Al
 
 const ResultCard = ({ result, onReset }) => {
   const isMalicious = result.status === 'malicious';
+  const gemini = result.gemini;
   
   // Format the URL to be displayed nicely (truncate if too long)
   const displayUrl = result.url.length > 50 ? result.url.substring(0, 47) + '...' : result.url;
@@ -84,6 +85,27 @@ const ResultCard = ({ result, onReset }) => {
             </div>
           </div>
         </div>
+
+        {gemini?.available && (
+          <div className="mb-6 p-4 rounded-xl bg-cyber-blue/5 border border-cyber-blue/20">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h4 className="text-sm font-semibold text-slate-300">Gemini Validation</h4>
+              <span className="text-xs uppercase text-cyber-blue">{gemini.verdict}</span>
+            </div>
+            <p className="text-sm text-slate-400 mb-3">{gemini.summary}</p>
+            {gemini.site_type && (
+              <p className="text-xs text-slate-500 mb-2">Site type: <span className="text-slate-300">{gemini.site_type}</span></p>
+            )}
+            {Array.isArray(gemini.indicators) && gemini.indicators.length > 0 && (
+              <ul className="list-disc list-inside space-y-1 text-xs text-slate-500">
+                {gemini.indicators.map((indicator) => <li key={indicator}>{indicator}</li>)}
+              </ul>
+            )}
+            {gemini.recommendation && (
+              <p className="mt-3 text-xs text-slate-400">{gemini.recommendation}</p>
+            )}
+          </div>
+        )}
 
         {isMalicious && (
           <div className="mt-auto p-4 rounded-xl border border-red-500/30 bg-red-500/10 flex items-start gap-3">

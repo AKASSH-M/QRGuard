@@ -3,7 +3,7 @@ import { Link2, ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
 import { analyzeUrl } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const URLChecker = ({ onResult, setIsLoading, hasResult, reset }) => {
+const URLChecker = ({ onResult, setLoadingPhase, hasResult, reset }) => {
   const [url, setUrl] = useState('');
   const [error, setError] = useState(null);
   const [localLoading, setLocalLoading] = useState(false);
@@ -18,7 +18,7 @@ const URLChecker = ({ onResult, setIsLoading, hasResult, reset }) => {
 
     setError(null);
     setLocalLoading(true);
-    setIsLoading(true);
+    setLoadingPhase('analyzing');
 
     try {
       const data = await analyzeUrl(trimmed);
@@ -26,14 +26,20 @@ const URLChecker = ({ onResult, setIsLoading, hasResult, reset }) => {
         setError(data.message || 'Error analyzing the URL.');
         onResult(null);
       } else {
-        onResult({ url: data.url, status: data.status, source: 'url' });
+        onResult({
+          url: data.url,
+          status: data.status,
+          mlStatus: data.ml_status,
+          gemini: data.gemini,
+          source: 'url',
+        });
       }
     } catch (err) {
       setError('Failed to connect to the analysis server. Please try again.');
       onResult(null);
     } finally {
       setLocalLoading(false);
-      setIsLoading(false);
+      setLoadingPhase(null);
     }
   };
 
