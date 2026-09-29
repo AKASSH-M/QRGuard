@@ -28,7 +28,7 @@
 
 QR codes have become a popular vector for phishing attacks — a malicious link disguised as a harmless QR code can steal credentials, install malware, or redirect users to fraudulent sites. QRGuard uses a trained **Random Forest Machine Learning model** combined with real-time URL feature extraction to instantly classify any QR code or link as **Safe** or **Malicious**.
 
-> 🎓 Built as a final-year college project (PBL) demonstrating practical applications of Machine Learning in cybersecurity.
+> 🎓 Built as a PBL project demonstrating practical applications of Machine Learning in cybersecurity.
 
 ---
 
@@ -286,6 +286,6 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ---
 
 <div align="center">
-  <p>Made with ❤️ as a Final Year PBL Project</p>
+  <p>Made with ❤️ as a PBL Project</p>
   <p><strong>QRGuard</strong> — Scan Smart. Stay Safe.</p>
 </div>
