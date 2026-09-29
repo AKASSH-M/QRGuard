@@ -205,7 +205,7 @@ gemini_client = (
     genai.Client(
         api_key=GEMINI_API_KEY,
         http_options=types.HttpOptions(
-            timeout=8000,
+            timeout=15000,
             retry_options=types.HttpRetryOptions(attempts=1),
         ),
     )
@@ -238,12 +238,12 @@ Existing machine-learning result: {ml_status}
 
     try:
         future = gemini_executor.submit(
-            gemini_client.interactions.create,
+            gemini_client.models.generate_content,
             model=GEMINI_MODEL,
-            input=prompt,
+            contents=prompt,
         )
-        interaction = future.result(timeout=8)
-        raw_text = (interaction.output_text or '').strip()
+        interaction = future.result(timeout=14)
+        raw_text = (interaction.text or '').strip()
         if raw_text.startswith('```'):
             raw_text = raw_text.strip('`').removeprefix('json').strip()
         validation = json.loads(raw_text)
@@ -268,9 +268,14 @@ Existing machine-learning result: {ml_status}
         }
     except Exception as error:
         app.logger.warning(f'Gemini validation failed: {error}')
+        error_text = str(error)
+        if 'RESOURCE_EXHAUSTED' in error_text or 'quota' in error_text.lower():
+            message = 'Gemini quota is exhausted; the ML result is shown.'
+        else:
+            message = 'Gemini validation was unavailable; the ML result is shown.'
         return {
             'available': False,
-            'message': 'Gemini validation was unavailable; the ML result is shown.',
+            'message': message,
         }
 
 def build_analysis_result(original_url):
