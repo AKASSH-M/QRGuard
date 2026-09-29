@@ -1,150 +1,291 @@
-# SecQR - Secure QR Code Scanning with AI
+<div align="center">
 
-SecQR is an AI-powered QR code scanner that identifies and warns users about malicious URLs. It uses a combination of machine learning and a database of known URLs to determine the safety of a link. If the URL is flagged as dangerous, the user is immediately alerted. Additionally, SecQR leverages database overrides to ensure that AI predictions are accurate, with safe or malicious URLs categorized and checked against the database.
+<h1>🛡️ QRGuard</h1>
+<p><strong>AI-Powered QR Code & URL Phishing Detection System</strong></p>
 
-![SecQR Banner](https://i.ibb.co/s9qJ3b1V/Wallet-Scope-1.png)
+<p>
+  <img src="https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-5.2-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+  <img src="https://img.shields.io/badge/Flask-2.3-000000?style=for-the-badge&logo=flask&logoColor=white" />
+  <img src="https://img.shields.io/badge/scikit--learn-RandomForest-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" />
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" />
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" />
+  <img src="https://img.shields.io/badge/Python-3.8+-blue?style=flat-square&logo=python" />
+  <img src="https://img.shields.io/badge/Node.js-18+-green?style=flat-square&logo=node.js" />
+</p>
+
+</div>
 
 ---
 
-## 🚀 Features
+## 📌 Overview
 
-- **Real-time QR Code Scanning**: Scan QR codes using your device's camera
-- **AI-Powered URL Analysis**: Detect potentially malicious URLs using machine learning
-- **Database Verification**: Cross-reference URLs with known safe/malicious databases
-- **Instant Alerts**: Get immediate notification about dangerous URLs
-- **Detailed Reports**: View comprehensive analysis results for scanned URLs
-- **Mobile-Responsive Design**: Works seamlessly on mobile and desktop devices
+**QRGuard** is a full-stack, AI-powered cybersecurity web application that protects users from phishing attacks and malicious content hidden inside QR codes and suspicious URLs.
+
+QR codes have become a popular vector for phishing attacks — a malicious link disguised as a harmless QR code can steal credentials, install malware, or redirect users to fraudulent sites. QRGuard uses a trained **Random Forest Machine Learning model** combined with real-time URL feature extraction to instantly classify any QR code or link as **Safe** or **Malicious**.
+
+> 🎓 Built as a final-year college project (PBL) demonstrating practical applications of Machine Learning in cybersecurity.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 📷 **QR Image Upload** | Drag & drop or browse a QR code image for instant analysis |
+| 🎥 **Live Camera Scanner** | Point your webcam at a QR code and capture it in real-time |
+| 🔗 **URL Checker** | Paste any suspicious link and get an AI-powered verdict instantly |
+| 🤖 **ML Classification** | Random Forest model classifies URLs as Safe or Malicious |
+| 📊 **Detection Dashboard** | View your complete scan history stored locally |
+| 🗄️ **Database Lookup** | Cross-references against known safe/malicious URL databases (MongoDB) |
+| 🌙 **Dark Cyber Theme** | Premium glassmorphism UI with neon accents and smooth animations |
+| 📱 **Responsive Design** | Works seamlessly on mobile, tablet, and desktop |
+| ⚡ **Real-time Results** | Instant threat analysis with confidence indicators |
+
+---
+
+## 🖥️ Application Screenshots
+
+> The application features a premium dark cybersecurity aesthetic with glassmorphism panels, neon cyan/blue accents, and smooth Framer Motion animations.
+
+**Home Page** — Three detection modes: Upload QR, Camera Scan, URL Check  
+**Result Cards** — Color-coded Safe (green) / Malicious (red) with security recommendations  
+**Dashboard** — Local history of all scanned QR codes and URLs  
+
+---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React.js for UI components
-- Axios for API requests
-- React Router for navigation
+| Technology | Purpose |
+|---|---|
+| **React.js 18** | UI component framework |
+| **Vite 5** | Next-generation build tool |
+| **Tailwind CSS 3** | Utility-first styling |
+| **Framer Motion** | Smooth animations & transitions |
+| **Axios** | HTTP API requests |
+| **React Router DOM** | Client-side routing |
+| **React Webcam** | Camera access for live scanning |
+| **Lucide React** | Modern icon library |
 
 ### Backend
-- Flask Python framework
-- MongoDB for URL database
-- Scikit-learn for machine learning model
+| Technology | Purpose |
+|---|---|
+| **Flask** | Python REST API framework |
+| **Flask-CORS** | Cross-Origin Resource Sharing |
+| **OpenCV** | QR code detection and decoding |
+| **Pillow** | Image processing |
+| **scikit-learn** | Random Forest ML model |
+| **Pandas / NumPy** | Data manipulation for feature extraction |
+| **MongoDB / PyMongo** | URL threat intelligence database |
+| **joblib** | Model serialization (.pkl) |
 
-### Machine Learning
-- Random Forest classifier
-- Feature extraction for URL analysis
-- Pre-trained model (.pkl format)
+---
+
+## 🧠 Machine Learning Model
+
+The core of QRGuard is a **Random Forest Classifier** trained on a large dataset of safe and malicious URLs.
+
+### Feature Extraction Pipeline
+The model extracts the following features from every URL before classification:
+
+- URL length and character count
+- Number of dots, slashes, and special characters
+- Presence of IP address in URL
+- HTTPS vs HTTP scheme detection
+- Domain length and TLD analysis
+- Presence of suspicious keywords (login, verify, secure, etc.)
+- Subdomain count
+- Path depth and query string analysis
+
+### Prediction Flow
+```
+QR Image / URL Input
+        ↓
+   QR Decode (OpenCV)
+        ↓
+   URL Normalization
+        ↓
+   DB Lookup (MongoDB) ──→ Known Safe/Malicious → Return Result
+        ↓ (if unknown)
+   Feature Extraction
+        ↓
+   Random Forest Predict
+        ↓
+   Safe / Malicious Result
+```
+
+---
+
+## 📁 Project Structure
+
+```
+QRGuard/
+│
+├── backend/
+│   ├── models/
+│   │   └── random_forest_model.pkl    # Pre-trained ML model
+│   ├── utils/
+│   │   └── feature_extraction.py      # URL feature engineering
+│   ├── app.py                          # Flask server & API endpoints
+│   └── requirements.txt               # Python dependencies
+│
+└── frontend/
+    ├── public/
+    ├── src/
+    │   ├── components/
+    │   │   ├── Navbar.jsx              # Top navigation bar
+    │   │   ├── Footer.jsx              # Footer with links
+    │   │   ├── QRUpload.jsx            # Drag & drop image uploader
+    │   │   ├── QRScanner.jsx           # Webcam scanner component
+    │   │   ├── URLChecker.jsx          # Direct URL input form
+    │   │   └── ResultCard.jsx          # Safe/Malicious result display
+    │   ├── layouts/
+    │   │   └── MainLayout.jsx          # App shell with animated background
+    │   ├── pages/
+    │   │   ├── Home.jsx                # Main scanner page (3 tabs)
+    │   │   ├── Dashboard.jsx           # Detection history dashboard
+    │   │   ├── About.jsx               # Project info & tech stack
+    │   │   └── NotFound.jsx            # 404 error page
+    │   ├── services/
+    │   │   └── api.js                  # Axios API abstraction layer
+    │   ├── App.jsx                     # Router setup
+    │   ├── main.jsx                    # Entry point
+    │   └── index.css                   # Global styles & Tailwind directives
+    ├── index.html
+    ├── package.json
+    ├── tailwind.config.js
+    └── vite.config.js
+```
 
 ---
 
 ## ⚙️ Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- Python (v3.8 or higher)
-- MongoDB (v4.4 or higher)
+- **Node.js** v18+
+- **Python** v3.8+
+- **MongoDB** (optional — app works without it via ML fallback)
 
-### Installation
+### 1. Clone the Repository
 
-1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/secqr.git
-cd secqr
+git clone https://github.com/harishv06/QRGuard.git
+cd QRGuard
 ```
 
-2. Set up backend environment
+### 2. Backend Setup
+
 ```bash
 cd backend
+
+# Create and activate virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Windows
+venv\Scripts\activate
+
+# Mac/Linux
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
-cp .env.example .env  # Configure your environment variables
 ```
 
-3. Set up frontend environment
-```bash
-cd ../frontend
-npm install
-cp .env.example .env  # Configure your environment variables
+Create a `.env` file inside `backend/` (optional):
+```env
+MONGODB_URI=mongodb://localhost:27017/QRGuard
+MONGODB_DB=QRGuard
+PORT=5000
 ```
 
-4. Configure environment variables
-   - Backend `.env`: Add your MongoDB connection string, API keys, etc.
-   - Frontend `.env`: Add your API endpoint
-
-### Running the Application
-
-1. Start the backend server
+Start the Flask server:
 ```bash
-cd backend
 python app.py
 ```
+> Backend runs on **http://localhost:5000**
 
-2. Start the frontend development server
+### 3. Frontend Setup
+
 ```bash
 cd frontend
-npm start
+
+# Install dependencies
+npm install
 ```
 
-3. Open your browser and navigate to `http://localhost:3000`
+Create a `.env` file inside `frontend/` (optional):
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+Start the Vite dev server:
+```bash
+npm run dev
+```
+> Frontend runs on **http://localhost:3000**
 
 ---
 
-## 🗂️ Project Structure
+## 🔌 API Endpoints
 
-### Frontend Structure
-- `components/`: Reusable UI components
-- `pages/`: Application pages
-- `services/`: API connection services
-- `assets/`: Images, CSS, and other static assets
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/health` | Server health check |
+| `POST` | `/scan` | Decode & classify QR code image (Base64) |
+| `POST` | `/analyze-url` | Directly classify a URL string |
+| `POST` | `/checksafe-url` | Check if URL is in safe database |
+| `POST` | `/checkmalicious-url` | Check if URL is in malicious database |
+| `POST` | `/report-url` | Report a URL as malicious |
 
-### Backend Structure
-- `routes/`: API endpoints
-- `services/`: Business logic services
-- `models/`: Machine learning model
-- `utils/`: Helper functions
+### Example Request — Analyze URL
+```bash
+curl -X POST http://localhost:5000/analyze-url \
+  -H "Content-Type: application/json" \
+  -d '{"url": "http://free-prize-winner.xyz/claim"}'
+```
 
-## </> API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/scan` | POST | Decode QR code image and analyze URL |
-| `/api/checksafe-url` | POST | Analyze a safe URL directly |
-| `/api/checkmalicious-url` | POST | Analyze a malicious URL directly |
-
-## 🧠 Machine Learning Model
-
-The URL classifier is trained on a dataset of both safe and malicious URLs. It extracts features such as:
-- URL length
-- Domain age and reputation
-- Special character frequency
-- TLD analysis
-- Path analysis
-
-The model file is stored in `backend/models/url_classifier.pkl` and is loaded at runtime.
-
-## 🔜 Future Enhancements
-
-- [ ] User authentication system
-- [ ] History of scanned QR codes
-- [ ] Browser extension
-- [ ] Offline scanning capabilities
-- [ ] Advanced threat intelligence integration
+### Example Response
+```json
+{
+  "status": "malicious",
+  "url": "http://free-prize-winner.xyz/claim"
+}
+```
 
 ---
 
-## 🤝 Contributing
+## 🔐 Security Notes
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- All QR images are processed **server-side** and not stored
+- Only the extracted **URL string** is used for ML inference
+- CORS is configured to restrict API access
+- MongoDB is gracefully bypassed if unavailable — the ML model handles all predictions independently
+
+---
+
+## 🚀 Future Enhancements
+
+- [ ] User authentication & personal history sync
+- [ ] Browser extension for automatic QR scanning
+- [ ] Confidence score % displayed in results
+- [ ] Bulk URL CSV upload and batch analysis
+- [ ] Integration with VirusTotal / Google Safe Browsing APIs
+- [ ] PWA support for mobile offline scanning
+
+---
 
 ## 🪪 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
+---
 
-## 📞 Contact
-
-Linkedin Link: [Sarthak Lad](https://www.linkedin.com/in/sarthak-lad/)
-
-Project Link: [Sarthaklad1034/SecQR](https://github.com/Sarthaklad1034/SecQR.git)
+<div align="center">
+  <p>Made with ❤️ as a Final Year PBL Project</p>
+  <p><strong>QRGuard</strong> — Scan Smart. Stay Safe.</p>
+</div>
