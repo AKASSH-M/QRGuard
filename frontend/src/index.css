@@ -6,13 +6,58 @@
 
 @layer base {
   body {
-    @apply bg-cyber-darker text-slate-200 antialiased font-sans overflow-x-hidden;
+    @apply bg-cyber-darker text-slate-200 antialiased font-sans overflow-x-hidden transition-colors duration-300;
   }
 }
 
 .glass-panel {
-  @apply bg-slate-900/40 backdrop-blur-md border border-slate-700/50 shadow-xl;
+  @apply bg-slate-900/40 backdrop-blur-md border border-slate-700/50 shadow-xl transition-colors duration-300;
 }
+
+html[data-theme='light'] body {
+  background: #e7eef7;
+  color: #172033;
+}
+
+html[data-theme='light'] .theme-light {
+  background: transparent;
+}
+
+html[data-theme='light'] .theme-light > .absolute:first-child {
+  background: radial-gradient(ellipse at top, #dceafe 0%, #eef4fb 55%, #e7eef7 100%);
+}
+
+html[data-theme='light'] .glass-panel {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(148, 163, 184, 0.38);
+  box-shadow: 0 20px 45px rgba(71, 85, 105, 0.12);
+}
+
+/* Keep the existing Tailwind component markup readable in the light glass theme. */
+html[data-theme='light'] .text-white { color: #172033 !important; }
+html[data-theme='light'] .text-slate-200 { color: #26344d !important; }
+html[data-theme='light'] .text-slate-300 { color: #334155 !important; }
+html[data-theme='light'] .text-slate-400 { color: #52627a !important; }
+html[data-theme='light'] .text-slate-500 { color: #64748b !important; }
+html[data-theme='light'] .border-slate-700,
+html[data-theme='light'] .border-slate-700\/50,
+html[data-theme='light'] .border-slate-800 { border-color: rgba(148, 163, 184, 0.38) !important; }
+html[data-theme='light'] .bg-slate-900\/40 { background-color: rgba(255, 255, 255, 0.5) !important; }
+html[data-theme='light'] .bg-slate-900\/50 { background-color: rgba(255, 255, 255, 0.62) !important; }
+html[data-theme='light'] .bg-slate-900\/80 { background-color: rgba(226, 232, 240, 0.86) !important; }
+html[data-theme='light'] .bg-slate-800\/20,
+html[data-theme='light'] .bg-slate-800\/30,
+html[data-theme='light'] .bg-slate-800\/50,
+html[data-theme='light'] .bg-slate-800\/70,
+html[data-theme='light'] .bg-slate-800\/80 { background-color: rgba(255, 255, 255, 0.42) !important; }
+html[data-theme='light'] .bg-slate-800 { background-color: rgba(226, 232, 240, 0.72) !important; }
+html[data-theme='light'] .hover\:bg-slate-800\/30:hover,
+html[data-theme='light'] .hover\:bg-slate-800\/40:hover,
+html[data-theme='light'] .hover\:bg-slate-800\/50:hover,
+html[data-theme='light'] .hover\:bg-slate-700:hover { background-color: rgba(203, 213, 225, 0.56) !important; }
+
+html[data-theme='light'] ::-webkit-scrollbar-track { background: #dbe5f0; }
+html[data-theme='light'] ::-webkit-scrollbar-thumb { background: #a8b8ca; }
 
 .text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-cyber-neon to-cyber-blue;

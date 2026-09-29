@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Home, Activity, Info, Menu, X } from 'lucide-react';
+import { Shield, Home, Activity, Info, Menu, X, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
-const Navbar = () => {
+const Navbar = ({ theme, onToggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -50,7 +50,16 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={onToggleTheme}
+              type="button"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              className="p-2 rounded-lg bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <a 
               href="https://github.com" 
               target="_blank" 
@@ -62,7 +71,16 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-1">
+            <button
+              onClick={onToggleTheme}
+              type="button"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              className="p-2 rounded-lg text-slate-400 hover:text-white transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <button
               onClick={toggleMenu}
               className="text-slate-400 hover:text-white focus:outline-none p-2"
