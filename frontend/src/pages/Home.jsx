@@ -65,7 +65,7 @@ const Home = () => {
   return (
     <div className="w-full flex flex-col items-center">
       {/* ── Hero ─────────────────────────────────────────── */}
-      <div className="text-center mb-12 w-full max-w-3xl">
+      {!result && <div className="text-center mb-12 w-full max-w-3xl">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -97,13 +97,13 @@ const Home = () => {
         >
           Protect yourself from malicious QR codes and phishing links. Upload a QR image, scan with your camera, or paste any URL — our AI analyses it instantly.
         </motion.p>
-      </div>
+      </div>}
 
       {/* ── Main Grid ─────────────────────────────────────── */}
-      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-12 gap-6 md:items-start">
+      <div className={`w-full ${result ? 'max-w-4xl' : 'max-w-5xl'} grid grid-cols-1 ${result ? '' : 'md:grid-cols-12'} gap-6 md:items-start`}>
 
         {/* Left: Scanner Panel */}
-        <motion.div
+        {!result && <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -200,14 +200,14 @@ const Home = () => {
               )}
             </div>
           </div>
-        </motion.div>
+        </motion.div>}
 
         {/* Right: Result Panel */}
         <motion.div
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="md:col-span-6 flex flex-col"
+          className={`${result ? '' : 'md:col-span-6'} flex flex-col`}
         >
           {result ? (
             <ResultCard result={result} onReset={resetScanner} />
@@ -228,7 +228,7 @@ const Home = () => {
       </div>
 
       {/* ── Feature Highlights ────────────────────────────── */}
-      <motion.div
+      {!result && <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
@@ -264,7 +264,7 @@ const Home = () => {
             </div>
           </div>
         ))}
-      </motion.div>
+      </motion.div>}
     </div>
   );
 };
