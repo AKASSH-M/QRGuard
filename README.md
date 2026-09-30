@@ -303,7 +303,7 @@ curl -X POST http://localhost:5000/analyze-url \
 - [ ] Browser extension for automatic QR scanning
 - [ ] Confidence score % displayed in results
 - [ ] Bulk URL CSV upload and batch analysis
-- [ ] Integration with VirusTotal / Google Safe Browsing APIs
+- [ ] Integration with OpenPhish / PhishTank / RDAP / Google Web Risk APIs
 - [ ] PWA support for mobile offline scanning
 
 ---

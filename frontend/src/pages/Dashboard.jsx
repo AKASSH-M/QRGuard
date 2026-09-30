@@ -124,6 +124,9 @@ const Dashboard = () => {
                       <div className="text-sm text-slate-300 max-w-xs md:max-w-md truncate" title={item.url}>
                         {item.url}
                       </div>
+                      {!item.security_features && !item.gemini_analysis && (
+                        <div className="text-xs text-slate-500 mt-1">Additional analysis unavailable for this scan.</div>
+                      )}
                     </td>
                     <td className="p-4 text-sm text-slate-500">
                       {formatDate(item.date)}

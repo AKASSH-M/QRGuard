@@ -48,19 +48,19 @@ const QRUpload = ({ onResult, setLoadingPhase, reset, hasResult }) => {
           return;
         }
 
-        setLoadingPhase('analyzing');
+        setLoadingPhase('features');
         const data = await analyzeUrl(extraction.result);
-        
+
         if (data.status === 'error') {
           setError(data.message || 'Error analyzing QR code data');
           onResult(null);
         } else {
           onResult({
-            url: data.url,
+            ...data,
             status: data.status,
             mlStatus: data.ml_status,
             gemini: data.gemini,
-            source: 'upload'
+            source: 'upload',
           });
         }
       } catch (err) {
@@ -110,7 +110,7 @@ const QRUpload = ({ onResult, setLoadingPhase, reset, hasResult }) => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center h-full">
+    <div className="w-full flex flex-col items-center">
       <input
         ref={inputRef}
         type="file"
@@ -121,7 +121,7 @@ const QRUpload = ({ onResult, setLoadingPhase, reset, hasResult }) => {
       
       {!previewUrl ? (
         <div 
-          className={`w-full flex-grow border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-8 transition-all cursor-pointer ${
+          className={`w-full min-h-[320px] border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-8 transition-all cursor-pointer ${
             dragActive 
               ? 'border-cyber-neon bg-cyber-neon/5 scale-[1.02]' 
               : 'border-slate-600 bg-slate-800/20 hover:bg-slate-800/40 hover:border-slate-500'
@@ -144,7 +144,7 @@ const QRUpload = ({ onResult, setLoadingPhase, reset, hasResult }) => {
           </button>
         </div>
       ) : (
-        <div className="w-full flex-grow flex flex-col items-center justify-center relative">
+        <div className="w-full flex flex-col items-center justify-center relative py-4">
           <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-700 max-w-[280px]">
             <img 
               src={previewUrl} 

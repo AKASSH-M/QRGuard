@@ -23,17 +23,30 @@ const Home = () => {
   const [result, setResult]       = useState(null);
   const [loadingPhase, setLoadingPhase] = useState(null);
 
+  const loadingSteps = [
+    'QR URL extracted',
+    'Security features analyzed',
+    'ML prediction completed',
+    'Checking external intelligence',
+    'Gemini researching website',
+    'Analysis completed',
+  ];
+
   const handleScanResult = (data) => {
     if (!data) return;
     setResult(data);
 
-    // Persist to local history
     const history = JSON.parse(localStorage.getItem('qrguard_history') || '[]');
     const newEntry = {
       id: Date.now(),
       date: new Date().toISOString(),
       url: data.url,
       status: data.status,
+      ml_prediction: data.ml_prediction || null,
+      security_features: data.security_features || null,
+      external_intelligence: data.external_intelligence || null,
+      gemini_analysis: data.gemini_analysis || null,
+      basic: data.basic || null,
     };
     localStorage.setItem(
       'qrguard_history',
@@ -87,16 +100,16 @@ const Home = () => {
       </div>
 
       {/* ── Main Grid ─────────────────────────────────────── */}
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-12 gap-8">
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-12 gap-6 md:items-start">
 
         {/* Left: Scanner Panel */}
         <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="md:col-span-7 flex flex-col"
+          className="md:col-span-6 flex flex-col"
         >
-          <div className="glass-panel rounded-2xl overflow-hidden flex flex-col h-full relative">
+          <div className="glass-panel rounded-2xl overflow-hidden flex flex-col relative">
 
             {/* Tab Bar */}
             <div className="flex border-b border-slate-700/50 bg-slate-800/30">
@@ -120,14 +133,43 @@ const Home = () => {
             </div>
 
             {/* Panel Body */}
-            <div className="p-6 flex-grow flex flex-col justify-center min-h-[400px] relative">
+            <div className="p-6 flex flex-col justify-center min-h-[320px] relative">
               {/* Global loading overlay */}
               {loadingPhase && (
-                <div className="absolute inset-0 z-10 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-b-2xl">
+                <div className="absolute inset-0 z-10 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-b-2xl px-6">
                   <div className="w-16 h-16 border-4 border-slate-700 border-t-cyber-neon rounded-full animate-spin" />
-                  <p className="mt-4 text-cyber-neon font-medium animate-pulse">
-                    {loadingPhase === 'extracting' ? 'Loading... extracting QR data' : 'Analyzing...'}
-                  </p>
+                  <div className="mt-5 w-full max-w-sm space-y-3">
+                    {loadingSteps.map((step, index) => {
+                      const activeIndex = {
+                        extracting: 0,
+                        features: 1,
+                        ml: 2,
+                        external: 3,
+                        gemini: 4,
+                        complete: 5,
+                      }[loadingPhase] ?? 0;
+
+                      const isDone = index < activeIndex;
+                      const isActive = index === activeIndex;
+                      return (
+                        <div
+                          key={step}
+                          className={`flex items-center gap-2 text-sm rounded-lg px-3 py-2 border ${
+                            isDone
+                              ? 'border-green-500/30 bg-green-500/10 text-green-300'
+                              : isActive
+                                ? 'border-cyber-neon/30 bg-cyber-neon/10 text-cyber-neon'
+                                : 'border-slate-700 bg-slate-800/30 text-slate-400'
+                          }`}
+                        >
+                          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold border ${isDone ? 'border-green-400 text-green-300' : isActive ? 'border-cyber-neon text-cyber-neon' : 'border-slate-500 text-slate-400'}">
+                            {isDone ? '✓' : index + 1}
+                          </span>
+                          <span>{step}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
@@ -165,12 +207,12 @@ const Home = () => {
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="md:col-span-5 flex flex-col"
+          className="md:col-span-6 flex flex-col"
         >
           {result ? (
             <ResultCard result={result} onReset={resetScanner} />
           ) : (
-            <div className="glass-panel rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full border-dashed border-2 border-slate-700/50">
+            <div className="glass-panel rounded-2xl p-8 flex flex-col items-center justify-center text-center min-h-[320px] border-dashed border-2 border-slate-700/50">
               <div className="w-20 h-20 rounded-full bg-slate-800/80 flex items-center justify-center mb-6 shadow-inner shadow-black/50">
                 <QrCode size={40} className="text-slate-500" />
               </div>

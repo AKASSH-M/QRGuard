@@ -25,20 +25,20 @@ const QRScanner = ({ onResult, setLoadingPhase, hasResult }) => {
         return;
       }
 
-      setLoadingPhase('analyzing');
+      setLoadingPhase('features');
       const data = await analyzeUrl(extraction.result);
-      
+
       if (data.status === 'error') {
         setError(data.message || 'Error analyzing QR code data.');
       } else {
         setCameraActive(false);
         setError(null);
         onResult({
-          url: data.url,
+          ...data,
           status: data.status,
           mlStatus: data.ml_status,
           gemini: data.gemini,
-          source: 'camera'
+          source: 'camera',
         });
       }
     } catch (err) {

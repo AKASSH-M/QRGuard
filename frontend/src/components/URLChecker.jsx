@@ -18,7 +18,7 @@ const URLChecker = ({ onResult, setLoadingPhase, hasResult, reset }) => {
 
     setError(null);
     setLocalLoading(true);
-    setLoadingPhase('analyzing');
+    setLoadingPhase('features');
 
     try {
       const data = await analyzeUrl(trimmed);
@@ -27,6 +27,7 @@ const URLChecker = ({ onResult, setLoadingPhase, hasResult, reset }) => {
         onResult(null);
       } else {
         onResult({
+          ...data,
           url: data.url,
           status: data.status,
           mlStatus: data.ml_status,
